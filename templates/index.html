@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investment Advisor</title>
+</head>
+<body>
+    <h2>Investment Risk Profiler</h2>
+    <form method="post">
+        <label>Drawdown (%):</label><input type="number" name="drawdown" step="0.1" required><br>
+        <label>Salary (INR):</label><input type="number" name="salary" required><br>
+        <label>Dependents:</label><input type="number" name="dependents" required><br>
+        <label>Age:</label><input type="number" name="age" required><br>
+        <label>Investment Type:</label>
+        <select name="investment_type">
+            <option value="Equity">Equity</option>
+            <option value="Mutual Funds">Mutual Funds</option>
+            <option value="Multi Asset Allocation">Multi Asset Allocation</option>
+        </select><br>
+        <label>Sector Preference:</label><input type="text" name="sector_preference" placeholder="None"><br>
+        <label>Total Investment Amount:</label><input type="number" name="total_investment_amount" required><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if result %}
+        <h3>Risk Profile: {{ profile }} (Score: {{ score }})</h3>
+        <h4>Recommendation:</h4>
+        <ul>
+            {% if user.investment_type == "Multi Asset Allocation" %}
+                {% for asset in result.recommended_assets %}
+                    <li>{{ asset.name }} - {{ asset.asset_class_type }} | Units: {{ asset.units }} | Cost: ₹{{ asset.allocated_amount }}</li>
+                {% endfor %}
+            {% else %}
+                {% for asset in result %}
+                    <li>{{ asset.name }} ({{ asset.ticker if asset.ticker else '' }}) | Units: {{ asset.units }} | Cost: ₹{{ asset.cost }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    {% endif %}
+</body>
+</html>
