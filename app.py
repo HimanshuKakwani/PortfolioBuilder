@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request
 
 from asset_data import ASSET_DATA
@@ -5,7 +7,11 @@ from logic import (calculate_risk_score, categorize_risk_profile,
                    recommend_equity_portfolio, recommend_mf_portfolio,
                    recommend_multi_asset_portfolio_specific_funds)
 
+# from flask_cors import CORS
+
+
 app = Flask(__name__)
+# CORS(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -38,4 +44,5 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(debug=False, host='0.0.0.0', port=port)
