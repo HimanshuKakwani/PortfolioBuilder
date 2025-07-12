@@ -1,40 +1,212 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Investment Advisor</title>
-</head>
-<body>
-    <h2>Investment Risk Profiler</h2>
-    <form method="post">
-        <label>Drawdown (%):</label><input type="number" name="drawdown" step="0.1" required><br>
-        <label>Salary (INR):</label><input type="number" name="salary" required><br>
-        <label>Dependents:</label><input type="number" name="dependents" required><br>
-        <label>Age:</label><input type="number" name="age" required><br>
-        <label>Investment Type:</label>
-        <select name="investment_type">
-            <option value="Equity">Equity</option>
-            <option value="Mutual Funds">Mutual Funds</option>
-            <option value="Multi Asset Allocation">Multi Asset Allocation</option>
-        </select><br>
-        <label>Sector Preference:</label><input type="text" name="sector_preference" placeholder="None"><br>
-        <label>Total Investment Amount:</label><input type="number" name="total_investment_amount" required><br>
-        <input type="submit" value="Submit">
-    </form>
+<html lang="en">
 
-    {% if result %}
-        <h3>Risk Profile: {{ profile }} (Score: {{ score }})</h3>
-        <h4>Recommendation:</h4>
-        <ul>
-            {% if user.investment_type == "Multi Asset Allocation" %}
-                {% for asset in result.recommended_assets %}
-                    <li>{{ asset.name }} - {{ asset.asset_class_type }} | Units: {{ asset.units }} | Cost: ₹{{ asset.allocated_amount }}</li>
-                {% endfor %}
-            {% else %}
-                {% for asset in result %}
-                    <li>{{ asset.name }} ({{ asset.ticker if asset.ticker else '' }}) | Units: {{ asset.units }} | Cost: ₹{{ asset.cost }}</li>
-                {% endfor %}
-            {% endif %}
-        </ul>
-    {% endif %}
+<head>
+    <meta charset="UTF-8" />
+    <title>DhanSetu - Investment Advisor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(120deg, #0d1d3a 60%, #5e4ae3 100%);
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            padding: 32px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #5e4ae333;
+            padding: 28px 24px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #5e4ae3;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1.2px solid #dcdcdc;
+            font-size: 1rem;
+            background: #f9f9fc;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #5e4ae3;
+            outline: none;
+            background: white;
+        }
+
+        input[type="submit"] {
+            margin-top: 8px;
+            background: linear-gradient(to right, #5e4ae3, #23395d);
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+        }
+
+        input[type="submit"]:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-table {
+            margin-top: 32px;
+            background: #f4f4fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px #ececf0;
+        }
+
+        .result-table h3 {
+            color: #e04e99;
+            margin: 0 0 10px;
+            text-align: center;
+        }
+
+        .result-table h4 {
+            margin: 10px 0;
+            text-align: center;
+            color: #5e4ae3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #ececfb;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 20px 14px;
+            }
+
+            input,
+            select {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>DhanSetu Risk Profiler</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label>Drawdown (%)</label>
+                <input type="number" name="drawdown" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label>Salary (INR)</label>
+                <input type="number" name="salary" required>
+            </div>
+            <div class="form-group">
+                <label>Dependents</label>
+                <input type="number" name="dependents" required>
+            </div>
+            <div class="form-group">
+                <label>Age</label>
+                <input type="number" name="age" required>
+            </div>
+            <div class="form-group">
+                <label>Investment Type</label>
+                <select name="investment_type" required>
+                    <option value="Equity">Equity</option>
+                    <option value="Mutual Funds">Mutual Funds</option>
+                    <option value="Multi Asset Allocation">Multi Asset Allocation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sector Preference</label>
+                <input type="text" name="sector_preference" placeholder="None">
+            </div>
+            <div class="form-group">
+                <label>Total Investment Amount</label>
+                <input type="number" name="total_investment_amount" required>
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+
+        {% if result %}
+        <div class="result-table">
+            <h3>Risk Profile: {{ profile }} (Score: {{ score }})</h3>
+            <h4>Recommendation</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        {% if user.investment_type == "Multi Asset Allocation" %}
+                        <th>Asset Class</th>
+                        {% else %}
+                        <th>Ticker</th>
+                        {% endif %}
+                        <th>Units</th>
+                        <th>Cost (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if user.investment_type == "Multi Asset Allocation" %}
+                    {% for asset in result.recommended_assets %}
+                    <tr>
+                        <td>{{ asset.name }}</td>
+                        <td>{{ asset.asset_class_type }}</td>
+                        <td>{{ asset.units }}</td>
+                        <td>₹{{ asset.allocated_amount }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    {% for asset in result %}
+                    <tr>
+                        <td>{{ asset.name }}</td>
+                        <td>{{ asset.ticker if asset.ticker else '—' }}</td>
+                        <td>{{ asset.units }}</td>
+                        <td>₹{{ asset.cost }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
 </body>
+
 </html>

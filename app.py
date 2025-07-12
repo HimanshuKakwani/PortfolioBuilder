@@ -32,15 +32,30 @@ def index():
         risk_profile = categorize_risk_profile(risk_score)
 
         if user_profile['investment_type'] == 'Equity':
-            portfolio = recommend_equity_portfolio(risk_profile, user_profile["sector_preference"], user_profile["total_investment_amount"],ASSET_DATA)
+            portfolio = recommend_equity_portfolio(
+                risk_profile,
+                user_profile["sector_preference"],
+                user_profile["total_investment_amount"],
+                ASSET_DATA
+            )
         elif user_profile['investment_type'] == 'Mutual Funds':
-            portfolio = recommend_mf_portfolio(risk_profile, user_profile["sector_preference"],ASSET_DATA)
+            portfolio = recommend_mf_portfolio(
+                risk_profile,
+                user_profile["sector_preference"],
+                ASSET_DATA
+            )
         else:
-            portfolio = recommend_multi_asset_portfolio_specific_funds(risk_profile, user_profile["total_investment_amount"], user_profile["sector_preference"],ASSET_DATA)
+            portfolio = recommend_multi_asset_portfolio_specific_funds(
+                risk_profile,
+                user_profile["total_investment_amount"],
+                user_profile["sector_preference"],
+                ASSET_DATA
+            )
 
         return render_template("index.html", result=portfolio, profile=risk_profile, score=risk_score, user=user_profile)
 
-    return render_template("index.html")
+    # ✅ Fix: Return something for GET requests
+    return render_template("index.html", result=None, user={})
 
 
 if __name__ == "__main__":
