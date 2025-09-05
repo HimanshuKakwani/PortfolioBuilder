@@ -26,27 +26,4 @@ Multi-Asset Allocation → Weighted mix of equity, bonds, and gold ETFs with rea
 ✅ Flask REST API endpoints for programmatic access
 ✅ CLI (interactive input) mode for local testing
 
-⚙️ Installation & Setup
 
-Clone the repo
-
-git clone https://github.com/your-username/risk-profiling-portfolio.git
-cd risk-profiling-portfolio
-
-
-Create a virtual environment & install dependencies
-
-python -m venv venv
-source venv/bin/activate   # On Linux/Mac
-venv\Scripts\activate      # On Windows
-
-pip install -r requirements.txt
-
-
-Run Flask server
-
-python app.py
-
-
-By default, the app runs on:
-👉 http://127.0.0.1:5000
